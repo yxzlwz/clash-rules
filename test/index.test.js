@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { renderConfig } from "../src/render.js";
+import { selectTemplateName } from "../src/templates.js";
 
 const template = "proxy-providers:\n  $$NAME$$:\n    url: '$$URL$$'\n    path: ./providers/$$NAME$$.yaml\n";
 
@@ -15,4 +16,10 @@ test("replaces provider name and URL", () => {
 test("rejects unsafe name and non-HTTP URL", () => {
   assert.throws(() => renderConfig(template, "bad: name", "https://example.com/sub"));
   assert.throws(() => renderConfig(template, "airport", "file:///etc/passwd"));
+});
+
+test("uses default and accepts only known templates", () => {
+  assert.equal(selectTemplateName(null), "default");
+  assert.equal(selectTemplateName("openai-only"), "openai-only");
+  assert.throws(() => selectTemplateName("unknown"));
 });

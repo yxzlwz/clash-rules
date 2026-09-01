@@ -1,5 +1,12 @@
-import configTemplate from "../config.yaml";
+import defaultTemplate from "../configs/default.yaml";
+import openaiOnlyTemplate from "../configs/openai-only.yaml";
 import { renderConfig } from "./render.js";
+import { selectTemplateName } from "./templates.js";
+
+const templates = {
+  default: defaultTemplate,
+  "openai-only": openaiOnlyTemplate,
+};
 
 export default {
   fetch(request) {
@@ -21,7 +28,8 @@ export default {
     }
 
     try {
-      return new Response(renderConfig(configTemplate, name, subscriptionUrl), {
+      const templateName = selectTemplateName(requestUrl.searchParams.get("config"));
+      return new Response(renderConfig(templates[templateName], name, subscriptionUrl), {
         headers: {
           "Content-Type": "text/yaml; charset=utf-8",
           "Content-Disposition": 'attachment; filename="clash.yaml"',
