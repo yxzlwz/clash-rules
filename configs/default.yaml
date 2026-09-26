@@ -1,5 +1,5 @@
 # Universal Stash / Mihomo (Clash Meta) multi-subscription configuration
-# Rule scale (2026-08-29): about 10,500 expanded rules.
+# Rule scale (2026-09-26): about 11,500 expanded rules.
 # Universal multi-airport template: fill any Clash/Stash subscription URLs in proxy-providers below.
 # All proxy groups aggregate every enabled provider; no logic depends on a specific airport/provider name.
 
@@ -123,6 +123,11 @@ proxy-groups:
     url: https://www.gstatic.com/generate_204
     interval: 300
 
+  # Ad blocking. Switch to DIRECT or 🚀 Proxy here if a blocked host needs to load.
+  - name: Advertisement
+    type: select
+    proxies: [REJECT, DIRECT, 🚀 Proxy]
+
   - name: Apple
     type: select
     proxies: [DIRECT, 🚀 Proxy, Auto, 🇭🇰 Hong Kong, 🇸🇬 Singapore, 🇯🇵 Japan, 🇺🇸 United States, 🇹🇼 Taiwan]
@@ -133,31 +138,31 @@ proxy-groups:
 
   - name: Netflix
     type: select
-    proxies: [🚀 Proxy, Auto, 🇭🇰 Hong Kong, 🇸🇬 Singapore, 🇯🇵 Japan, 🇺🇸 United States, 🇹🇼 Taiwan, 🏠 Home Broadband]
+    proxies: [🚀 Proxy, Auto, 🇭🇰 Hong Kong, 🇸🇬 Singapore, 🇯🇵 Japan, 🇺🇸 United States, 🇹🇼 Taiwan, 🏠 Home Broadband, DIRECT]
 
   - name: Disney
     type: select
-    proxies: [🚀 Proxy, Auto, 🇭🇰 Hong Kong, 🇸🇬 Singapore, 🇯🇵 Japan, 🇺🇸 United States, 🇹🇼 Taiwan, 🏠 Home Broadband]
+    proxies: [🚀 Proxy, Auto, 🇭🇰 Hong Kong, 🇸🇬 Singapore, 🇯🇵 Japan, 🇺🇸 United States, 🇹🇼 Taiwan, 🏠 Home Broadband, DIRECT]
 
   - name: YouTube
     type: select
-    proxies: [🚀 Proxy, Auto, 🇭🇰 Hong Kong, 🇸🇬 Singapore, 🇯🇵 Japan, 🇺🇸 United States, 🇹🇼 Taiwan]
+    proxies: [🚀 Proxy, Auto, 🇭🇰 Hong Kong, 🇸🇬 Singapore, 🇯🇵 Japan, 🇺🇸 United States, 🇹🇼 Taiwan, DIRECT]
 
   - name: TikTok
     type: select
-    proxies: [🚀 Proxy, Auto, 🇭🇰 Hong Kong, 🇸🇬 Singapore, 🇯🇵 Japan, 🇺🇸 United States, 🇹🇼 Taiwan]
+    proxies: [🚀 Proxy, Auto, 🇭🇰 Hong Kong, 🇸🇬 Singapore, 🇯🇵 Japan, 🇺🇸 United States, 🇹🇼 Taiwan, DIRECT]
 
   - name: GlobalMedia
     type: select
-    proxies: [🚀 Proxy, Auto, 🇭🇰 Hong Kong, 🇸🇬 Singapore, 🇯🇵 Japan, 🇺🇸 United States, 🇹🇼 Taiwan]
+    proxies: [🚀 Proxy, Auto, 🇭🇰 Hong Kong, 🇸🇬 Singapore, 🇯🇵 Japan, 🇺🇸 United States, 🇹🇼 Taiwan, DIRECT]
 
   - name: OpenAI
     type: select
-    proxies: [🚀 Proxy, Auto, 🇸🇬 Singapore, 🇯🇵 Japan, 🇺🇸 United States, 🏠 Home Broadband]
+    proxies: [🚀 Proxy, Auto, 🇸🇬 Singapore, 🇯🇵 Japan, 🇺🇸 United States, 🏠 Home Broadband, DIRECT]
 
   - name: Google
     type: select
-    proxies: [🚀 Proxy, Auto, 🇭🇰 Hong Kong, 🇸🇬 Singapore, 🇯🇵 Japan, 🇺🇸 United States, 🇹🇼 Taiwan]
+    proxies: [🚀 Proxy, Auto, 🇭🇰 Hong Kong, 🇸🇬 Singapore, 🇯🇵 Japan, 🇺🇸 United States, 🇹🇼 Taiwan, DIRECT]
 
   - name: Microsoft
     type: select
@@ -173,7 +178,7 @@ proxy-groups:
 
   - name: Telegram
     type: select
-    proxies: [🚀 Proxy, 🇭🇰 Hong Kong, 🇸🇬 Singapore, 🇯🇵 Japan, 🇺🇸 United States, 🇹🇼 Taiwan]
+    proxies: [🚀 Proxy, 🇭🇰 Hong Kong, 🇸🇬 Singapore, 🇯🇵 Japan, 🇺🇸 United States, 🇹🇼 Taiwan, DIRECT]
 
   - name: Lan
     type: select
@@ -191,9 +196,17 @@ proxy-groups:
 # Rule providers
 # Existing service rule sets: about 7,426 entries.
 # China_Domain: 3,070 entries (curated replacement for ChinaMax).
-# Total expanded rules: about 10,500, leaving substantial room below 20,000.
+# AWAvenue_Ads_Rule: about 965 entries (ad/tracker blocklist).
+# Total expanded rules: about 11,500, leaving substantial room below 20,000.
 # -----------------------------------------------------------------------------
 rule-providers:
+  AWAvenue_Ads_Rule:
+    type: http
+    behavior: classical
+    format: yaml
+    interval: 86400
+    url: https://raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main/Filters/AWAvenue-Ads-Rule-Clash-Classical.yaml
+
   WeChat:
     type: http
     behavior: classical
@@ -311,6 +324,9 @@ rule-providers:
 # Specific services first, China direct near the end, then final whitelist proxy.
 # -----------------------------------------------------------------------------
 rules:
+  # Ad blocking first, so nothing below can leak an ad host to a proxy.
+  - RULE-SET,AWAvenue_Ads_Rule,Advertisement
+
   # Optional user-specific rules
   - DOMAIN-SUFFIX,polymarket.com,🇭🇰 Hong Kong
 

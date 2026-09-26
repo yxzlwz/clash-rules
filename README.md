@@ -21,6 +21,11 @@ https://<你的域名>/clash?name=my_airport&url=https%3A%2F%2Fexample.com%2Fsub
 https://<你的域名>/clash?config=openai-only&name=my_airport&url=https%3A%2F%2Fexample.com%2Fsubscribe%3Ftoken%3Dxxx
 ```
 
+## default 模板的分组
+
+- `Advertisement`：广告拦截分组，命中 [AWAvenue-Ads-Rule](https://github.com/TG-Twilight/AWAvenue-Ads-Rule) 的流量走这里。该规则集是 `rules` 的第一条，默认选项为 `REJECT`；某个被拦截的域名确实需要访问时，把该分组切换为 `DIRECT` 或 `🚀 Proxy` 即可。
+- 所有 `select` 分组都带有 `DIRECT` 选项。因此无需关闭 Clash 就能只代理某一个分组：把 `🚀 Proxy` 选为 `DIRECT`（以它为默认选项的分组会一起直连），再把要代理的那个分组单独选成 `Auto` 或某个地区分组。
+
 ## 本地开发与部署
 
 ```bash
