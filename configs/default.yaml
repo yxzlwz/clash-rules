@@ -206,7 +206,7 @@ rule-providers:
     interval: 86400
     url: https://raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main/Filters/AWAvenue-Ads-Rule-Clash-Classical.yaml
 
-  WeChat:
+  WeChat_No_Resolve:
     type: http
     behavior: classical
     format: yaml
@@ -323,14 +323,11 @@ rule-providers:
 # Specific services first, China direct near the end, then final whitelist proxy.
 # -----------------------------------------------------------------------------
 rules:
-  # Ad blocking first, so nothing below can leak an ad host to a proxy.
   - RULE-SET,AWAvenue_Ads_Rule,Advertisement
 
-  # Optional user-specific rules
   - DOMAIN-SUFFIX,polymarket.com,🇭🇰 Hong Kong
 
-  # Keep WeChat traffic on the direct connection.
-  - RULE-SET,WeChat,DIRECT
+  - RULE-SET,WeChat_No_Resolve,DIRECT
 
   - RULE-SET,Lan_No_Resolve,Lan
   - RULE-SET,Apple_Classical_No_Resolve,Apple
