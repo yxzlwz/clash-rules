@@ -9,6 +9,7 @@ allow-lan: true
 mode: rule
 log-level: info
 ipv6: true
+
 unified-delay: true
 tcp-concurrent: true
 global-client-fingerprint: chrome
@@ -338,8 +339,6 @@ rules:
 
   - DOMAIN-SUFFIX,polymarket.com,🇭🇰 Hong Kong
 
-  - RULE-SET,WeChat_No_Resolve,DIRECT
-
   - RULE-SET,Lan_No_Resolve,Lan
   - RULE-SET,Apple_Classical_No_Resolve,Apple
   - RULE-SET,BiliBili_No_Resolve,BiliBili
@@ -358,6 +357,8 @@ rules:
 
   # Lightweight China routing: 3,070-domain cache + GeoIP fallback
   - RULE-SET,China_Domain,🇨🇳 China
+  - RULE-SET,WeChat_No_Resolve,🇨🇳 China
+  - DOMAIN-SUFFIX,aliyun.com,🇨🇳 China
   - GEOIP,CN,🇨🇳 China
 
   # Optional: force unmatched HTTP/3/QUIC traffic back to TCP.
