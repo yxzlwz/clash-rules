@@ -1,6 +1,6 @@
 # Universal Stash / Mihomo (Clash Meta) multi-subscription configuration
 # Rule scale (2026-09-26): about 11,500 expanded rules.
-# Universal multi-airport template: fill any Clash/Stash subscription URLs in proxy-providers below.
+# Subscription-free template: the Worker injects a proxy-provider for /clash.
 # All proxy groups aggregate every enabled provider; no logic depends on a specific airport/provider name.
 
 port: 7890
@@ -43,19 +43,6 @@ dns:
     - '*.home.arpa'
     - 'localhost.ptlogin2.qq.com'
     - '+.push.apple.com'
-
-# -----------------------------------------------------------------------------
-# Proxy providers
-# Replace the placeholder URLs. Duplicate a block to add Sub5/Sub6/... later.
-# -----------------------------------------------------------------------------
-proxy-providers:
-  # IMPORTANT: Fill every active provider URL. Delete an unused active provider.
-  # The subscription response should be Clash/Stash YAML containing a `proxies:` field.
-  $$NAME$$:
-    type: http
-    url: '$$URL$$'
-    path: ./providers/$$NAME$$.yaml
-    interval: 43200
 
 # -----------------------------------------------------------------------------
 # Proxy groups

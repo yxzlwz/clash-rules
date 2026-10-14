@@ -1,7 +1,18 @@
+import { isMap, parseDocument } from "yaml";
+
 const NAME_PATTERN = /^[A-Za-z0-9_-]{1,64}$/;
 
-function yamlSingleQuoted(value) {
-  return `'${value.replace(/'/g, "''")}'`;
+function readTemplate(template) {
+  const document = parseDocument(template);
+  if (document.errors.length) throw document.errors[0];
+  if (!isMap(document.contents)) {
+    throw new Error("模板必须是 YAML 配置对象。");
+  }
+  return document;
+}
+
+export function renderTemplate(template) {
+  return readTemplate(template).toString({ lineWidth: 0 });
 }
 
 export function renderConfig(template, name, subscriptionUrl) {
@@ -19,7 +30,12 @@ export function renderConfig(template, name, subscriptionUrl) {
     throw new Error("url 必须是有效的 HTTP(S) 订阅地址。");
   }
 
-  return template
-    .replaceAll("$$NAME$$", name)
-    .replaceAll("'$$URL$$'", yamlSingleQuoted(subscriptionUrl));
+  const document = readTemplate(template);
+  document.setIn(["proxy-providers", name], {
+    type: "http",
+    url: subscriptionUrl,
+    path: `./providers/${name}.yaml`,
+    interval: 43200,
+  });
+  return document.toString({ lineWidth: 0 });
 }

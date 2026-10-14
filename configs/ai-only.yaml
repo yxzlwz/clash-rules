@@ -1,4 +1,4 @@
-# Minimal Mihomo / Clash Meta configuration: proxy OpenAI only.
+# Minimal Mihomo / Clash Meta configuration: proxy OpenAI and Claude only.
 port: 7890
 socks-port: 7891
 allow-lan: true
@@ -24,13 +24,6 @@ dns:
     - https://doh.pub/dns-query
     - https://dns.alidns.com/dns-query
 
-proxy-providers:
-  $$NAME$$:
-    type: http
-    url: '$$URL$$'
-    path: ./providers/$$NAME$$.yaml
-    interval: 43200
-
 proxy-groups:
   - name: 🚀 Proxy
     type: select
@@ -47,6 +40,10 @@ proxy-groups:
     type: select
     proxies: [🚀 Proxy, Auto, DIRECT]
 
+  - name: Anthropic
+    type: select
+    proxies: [🚀 Proxy, Auto, DIRECT]
+
 rule-providers:
   OpenAI_No_Resolve:
     type: http
@@ -55,8 +52,16 @@ rule-providers:
     interval: 86400
     url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/OpenAI/OpenAI_No_Resolve.yaml
 
+  Claude_No_Resolve:
+    type: http
+    behavior: classical
+    format: yaml
+    interval: 86400
+    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Claude/Claude_No_Resolve.yaml
+
 rules:
   - RULE-SET,OpenAI_No_Resolve,OpenAI
+  - RULE-SET,Claude_No_Resolve,Anthropic
   - MATCH,DIRECT
 
 sniffer:
