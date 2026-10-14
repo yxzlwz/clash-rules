@@ -337,6 +337,11 @@ rule-providers:
 rules:
   - RULE-SET,AWAvenue_Ads_Rule,Advertisement
 
+  # SMTP ports
+  - DST-PORT,25,DIRECT
+  - DST-PORT,465,DIRECT
+  - DST-PORT,587,DIRECT
+
   - DOMAIN-SUFFIX,polymarket.com,🇭🇰 Hong Kong
 
   - RULE-SET,Lan_No_Resolve,Lan
