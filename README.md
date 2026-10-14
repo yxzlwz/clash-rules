@@ -66,3 +66,7 @@ npm run deploy
 两个接口都支持 GET 和 HEAD。模板名写错、订阅地址无效，或 `/clash` 缺少必填参数时，返回 400。
 
 维护约定和实现细节见 [AGENTS.md](AGENTS.md)。
+
+## 许可证
+
+[MIT](LICENSE)。模板引用的第三方规则集遵循各自仓库的许可证。
