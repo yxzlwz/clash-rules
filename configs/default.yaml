@@ -1,7 +1,7 @@
 # Universal Stash / Mihomo (Clash Meta) multi-subscription configuration
 # Rule scale (2026-09-26): about 11,500 expanded rules.
-# Subscription-free template: the Worker injects a proxy-provider for /clash.
-# All proxy groups aggregate every enabled provider; no logic depends on a specific airport/provider name.
+# Subscription-free template: /clash inlines the subscription proxies into this file.
+# Proxy groups use include-all so every node participates; no logic depends on a specific airport name.
 
 port: 7890
 socks-port: 7891
@@ -46,7 +46,7 @@ dns:
 
 # -----------------------------------------------------------------------------
 # Proxy groups
-# include-all makes every subscription automatically participate (supported by Stash and Mihomo).
+# include-all makes every inlined proxy automatically participate (supported by Stash and Mihomo).
 # -----------------------------------------------------------------------------
 proxy-groups:
   - name: 🚀 Proxy

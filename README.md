@@ -2,7 +2,22 @@
 
 把自己的订阅接上这里的分流规则，生成一份给 Stash 或 Mihomo 使用的配置。部署在 Cloudflare Workers 上，提供通用分流和只代理 OpenAI、Claude 两套模板。
 
-节点仍由客户端从原订阅下载。这个项目负责配置和规则，不转换节点格式；原订阅需要能返回带 `proxies` 字段的 Clash/Stash YAML。
+Worker 会直接请求你的订阅，把其中的 `proxies` 写进返回配置。不转换节点格式；原订阅需要能返回带 `proxies` 字段的 Clash/Stash YAML。
+
+## 让 Agent 帮你部署
+
+把下面这段发给能执行终端命令的 Agent，它会帮你部署到自己的 Cloudflare 账号：
+
+```text
+帮我把 https://github.com/yxzlwz/clash-rules 部署到我的 Cloudflare Workers。
+
+克隆仓库，阅读 README.md 和 AGENTS.md，安装依赖并检查打包。
+检查 Cloudflare 登录状态，未登录时引导我完成登录；如果有多个账号，先让我选择。
+使用一个不会覆盖已有 Worker 的名称，保留仓库中的 YAML 导入配置，然后执行部署。
+部署后，分别验证 default 和 ai-only 的 /clash-template 接口能返回有效 YAML，
+并检查 HEAD 请求正常。最后给我部署地址，以及可以直接导入客户端的 /clash 链接格式。
+如果需要我的订阅地址来实测，再向我要，不要把订阅地址或 token 写进仓库。
+```
 
 ## 怎么用
 
@@ -38,13 +53,13 @@ curl --get 'https://<你的域名>/clash' \
 
 ### 只下载模板
 
-如果想自己添加订阅，直接下载不带节点和订阅地址的配置：
+如果想自己添加节点，直接下载不带节点的模板：
 
 ```bash
 curl 'https://<你的域名>/clash-template?config=ai-only' -o template.yaml
 ```
 
-省略参数会返回通用模板。规则、代理组和 DNS 等设置都在，添加订阅后才能使用代理。
+省略参数会返回通用模板。规则、代理组和 DNS 等设置都在，自行补上节点后才能使用代理。
 
 ## 自己部署
 
@@ -59,9 +74,9 @@ npm run deploy
 
 ## 流量和到期时间
 
-原订阅提供流量和到期信息时，Worker 会把它带给客户端，刷新订阅后即可查看。原订阅没有这些信息，或者不允许 Cloudflare Worker 访问时，配置仍能下载，但无法显示服务信息。客户端能访问订阅，不代表 Worker 也能访问。
+原订阅提供流量和到期信息时，Worker 会在同一次订阅请求里带给客户端，刷新订阅后即可查看。原订阅没有这些信息时，配置仍可下载，只是看不到服务信息。原订阅不允许 Cloudflare Worker 访问，或返回的不是可用 Clash/Stash YAML 时，`/clash` 会失败。客户端能访问订阅，不代表 Worker 也能访问。
 
-查询最多等待 5 秒。模板下载接口不查询订阅，也不返回流量信息。
+订阅请求最多等待 5 秒。模板下载接口不请求订阅，也不返回流量信息。
 
 两个接口都支持 GET 和 HEAD。模板名写错、订阅地址无效，或 `/clash` 缺少必填参数时，返回 400。
 

@@ -1,6 +1,6 @@
-import { renderConfig, renderTemplate } from "./render.js";
+import { assertSubscriptionParams, renderConfig, renderTemplate } from "./render.js";
 import { selectTemplateName } from "./templates.js";
-import { fetchSubscriptionInfo } from "./subscription.js";
+import { fetchSubscription } from "./subscription.js";
 
 export function createHandler(templates, fetchFn = fetch) {
   return async function handleRequest(request) {
@@ -25,15 +25,13 @@ export function createHandler(templates, fetchFn = fetch) {
       return respond("Query parameters missing.", { status: 400 });
     }
 
-    let config;
+    let templateName;
     try {
-      const templateName = selectTemplateName(
+      templateName = selectTemplateName(
         requestUrl.searchParams.get("config") ??
           requestUrl.searchParams.get("template"),
       );
-      config = isTemplate
-        ? renderTemplate(templates[templateName])
-        : renderConfig(templates[templateName], name, subscriptionUrl);
+      if (!isTemplate) assertSubscriptionParams(name, subscriptionUrl);
     } catch (error) {
       return respond(error.message, { status: 400 });
     }
@@ -44,14 +42,36 @@ export function createHandler(templates, fetchFn = fetch) {
       "Cache-Control": "no-store",
       "X-Content-Type-Options": "nosniff",
     });
-    if (!isTemplate) {
-      const info = await fetchSubscriptionInfo(
+
+    if (isTemplate) {
+      return respond(renderTemplate(templates[templateName]), { headers });
+    }
+
+    let subscription;
+    try {
+      subscription = await fetchSubscription(
         subscriptionUrl,
         request.headers.get("User-Agent"),
         fetchFn,
       );
-      if (info) headers.set("Subscription-Userinfo", info);
+    } catch (error) {
+      let message = "订阅请求失败。";
+      if (error?.name === "AbortError") {
+        message = "订阅请求超时。";
+      } else if (/^订阅/.test(error?.message ?? "")) {
+        message = error.message;
+      }
+      return respond(message, { status: 502 });
     }
+
+    let config;
+    try {
+      config = renderConfig(templates[templateName], subscription.proxies);
+    } catch (error) {
+      return respond(error.message, { status: 502 });
+    }
+
+    if (subscription.info) headers.set("Subscription-Userinfo", subscription.info);
     return respond(config, { headers });
   };
 }
